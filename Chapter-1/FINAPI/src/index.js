@@ -7,7 +7,6 @@ app.use(express.json());
 
 const customers = [];
 
-
 function verifyIfExistsAccountCPF(req, res, next) {
 
   const { cpf } = req.headers;
@@ -104,6 +103,18 @@ app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
 
   return res.status(201).send();
 
+});
+
+app.get("/statement/date", verifyIfExistsAccountCPF, (req, res) => {
+
+  const { customer } = req;
+  const { date } = req.query;
+
+  const dateFormat = new Date(date + " 00:00");
+
+  const statement = customer.statement.filter(statement => statement.create_at.toDateString() === dateFormat.toDateString());
+
+  return res.json(statement);
 });
 
 app.listen(3333);
